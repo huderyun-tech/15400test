@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>托育人員單一級學科模擬測試系統（工會專屬版）</title>
+    <style>
+        :root {
+            --primary: #1e40af;
+            --primary-light: #3b82f6;
+            --primary-bg: #eff6ff;
+            --secondary: #0f766e;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #cbd5e1;
+            --success: #16a34a;
+            --success-bg: #dcfce7;
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+            --warning: #d97706;
+            --warning-bg: #fef3c7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Microsoft JhengHei", "PingFang TC", -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        html {
+            overflow-y: scroll; /* 防止卷軸出現/消失造成的水平微跳動 */
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, #1e3a8a 100%);
+            color: white;
+            padding: 0.85rem 1.25rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .header-title p {
+            font-size: 0.78rem;
+            opacity: 0.85;
+        }
+
+        .timer-box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.35rem 0.85rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            display: none;
+            align-items: center;
+            gap: 0.4rem;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .timer-box.warning {
+            background: var(--danger);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 1.25rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Start Screen (Portal Entry) */
+        .portal-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1.75rem 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+
+        .portal-badge {
+            display: inline-block;
+            background: var(--primary-bg);
+            color: var(--primary);
+            font-weight: bold;
+            padding: 0.3rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .portal-card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .portal-desc {
+            color: var(--text-muted);
+            max-width: 650px;
+            margin: 0 auto 1.75rem;
+            font-size: 0.95rem;
+        }
+
+        /* Two Channels Grid */
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .channel-box {
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1.4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+            background: #fff;
+        }
+
+        .channel-box:hover {
+            border-color: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.1);
+        }
+
+        .channel-box.featured {
+            border-color: var(--primary);
+            background: linear-gradient(to bottom, #ffffff, #f8fafc);
+            position: relative;
+        }
+
+        .ribbon {
+            position: absolute;
+            top: -12px;
+            right: 16px;
+            background: var(--primary);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 0.2rem 0.75rem;
+            border-radius: 12px;
+        }
+
+        .channel-box h3 {
+            font-size: 1.15rem;
+            margin-bottom: 0.6rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .channel-box.official h3 {
+            color: var(--secondary);
+        }
+
+        .channel-features {
+            list-style: none;
+            margin: 1rem 0 1.25rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .channel-features li {
+            margin-bottom: 0.45rem;
+            padding-left: 1.3rem;
+            position: relative;
+        }
+
+        .channel-features li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .mode-selector {
+            background: var(--bg);
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .mode-selector label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 0.4rem;
+            color: var(--text);
+        }
+
+        .mode-selector select {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.7rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.15s;
+            width: 100%;
+            user-select: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #0d9488;
+        }
+
+        .btn-outline {
+            background: white;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background: var(--bg);
+        }
+
+        .btn-outline:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .btn-warning {
+            background: var(--warning-bg);
+            color: var(--warning);
+            border: 1px solid #fcd34d;
+        }
+
+        .btn-warning.active {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        /* Exam Layout */
+        .exam-layout {
+            display: none;
+            grid-template-columns: 1fr 310px;
+            gap: 1.25rem;
+            align-items: start;
+        }
+
+        @media (max-width: 850px) {
+            .exam-layout {
+                grid-template-columns: 1fr;
+                padding-bottom: 68px; /* 預留手機底部固定操作列空間 */
+            }
+        }
+
+        .question-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1.4rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow-anchor: none; /* 防止瀏覽器自動錨點捲動造成換題跳動 */
+        }
+
+        .q-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.7rem;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .q-category {
+            background: var(--primary-bg);
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: bold;
+            padding: 0.25rem 0.7rem;
+            border-radius: 6px;
+        }
+
+        .q-progress {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: bold;
+        }
+
+        /* 題目與選項穩定高度容器（大幅減少換題時的高度落差與跳動） */
+        .q-body-stable {
+            min-height: 330px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        @media (max-width: 600px) {
+            .q-body-stable {
+                min-height: 300px;
+            }
+        }
+
+        .q-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            color: var(--text);
+            line-height: 1.65;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            padding: 0.85rem 0.95rem;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: border-color 0.15s, background 0.15s;
+            background: white;
+        }
+
+        .option-item:hover {
+            border-color: var(--primary-light);
+            background: #f8fafc;
+        }
+
+        .option-item.selected {
+            border-color: var(--primary);
+            background: var(--primary-bg);
+        }
+
+        .option-badge {
+            min-width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--bg);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.88rem;
+            border: 1px solid var(--border);
+            margin-top: 1px;
+        }
+
+        .option-item.selected .option-badge {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .option-text {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* 電腦版題目下方操作列 */
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.65rem;
+            margin-top: 1.5rem;
+            padding-top: 1.1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-controls .btn {
+            width: auto;
+            flex: 1;
+            padding: 0.65rem 0.5rem;
+            font-size: 0.92rem;
+        }
+
+        /* 手機版底部固定導覽列（徹底解決手指上下追按鈕、畫面跳動問題） */
+        @media (max-width: 850px) {
+            .nav-controls {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin-top: 0;
+                padding: 0.6rem 0.75rem;
+                background: rgba(255, 255, 255, 0.97);
+                backdrop-filter: blur(6px);
+                border-top: 1px solid var(--border);
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+                z-index: 95;
+            }
+        }
+
+        /* Answer Sheet Sidebar */
+        .sidebar-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1.2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .sidebar-title {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 0.7rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .legend {
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 0.85rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        /* 修正題號預覽超框與外框裁切問題 */
+        .grid-numbers {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 0.5rem;
+            max-height: 360px;
+            overflow-y: auto;
+            padding: 6px; /* 預留外框與右上角橘點空間，絕不超框裁切 */
+            margin: 0 -4px 1.1rem -4px;
+        }
+
+        .num-btn {
+            padding: 0.45rem 0;
+            border: 1.5px solid var(--border);
+            background: white;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            position: relative;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .num-btn.answered {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* 改用 box-shadow 取代 outline，避免捲動容器邊緣被切掉 */
+        .num-btn.current {
+            border-color: #0f172a;
+            box-shadow: 0 0 0 2px #0f172a;
+            z-index: 2;
+        }
+
+        .num-btn.answered.current {
+            border-color: #ffffff;
+            box-shadow: 0 0 0 2.5px #0f172a;
+        }
+
+        .num-btn.flagged::after {
+            content: "";
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 10px;
+            height: 10px;
+            background: var(--warning);
+            border-radius: 50%;
+            border: 1.5px solid white;
+            z-index: 3;
+        }
+
+        /* Result Screen */
+        .result-screen {
+            display: none;
+        }
+
+        .score-banner {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 2rem 1.25rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            margin-bottom: 1.5rem;
+        }
+
+        .score-circle {
+            width: 125px;
+            height: 125px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 8px solid var(--success);
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .score-circle.fail {
+            border-color: var(--danger);
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .score-num {
+            font-size: 2.1rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-top: 0.25rem;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 1.75rem;
+            margin: 1.2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-box {
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .stat-lbl {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .review-controls {
+            display: flex;
+            gap: 0.65rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .review-controls .btn {
+            width: auto;
+        }
+
+        .review-card {
+            background: var(--card);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            border-left: 5px solid var(--success);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .review-card.wrong {
+            border-left-color: var(--danger);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .tag-correct { color: var(--success); }
+        .tag-wrong { color: var(--danger); }
+
+        .review-opts {
+            margin-top: 0.75rem;
+            font-size: 0.92rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .rev-opt {
+            padding: 0.45rem 0.7rem;
+            border-radius: 6px;
+        }
+
+        .rev-opt.is-ans {
+            background: var(--success-bg);
+            color: #14532d;
+            font-weight: bold;
+        }
+
+        .rev-opt.is-user-wrong {
+            background: var(--danger-bg);
+            color: #7f1d1d;
+            text-decoration: line-through;
+        }
+
+        .notice-footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 1.75rem 0 2.5rem;
+            padding: 0 1rem;
+        }
+
+        @media (max-width: 850px) {
+            .notice-footer.in-exam {
+                margin-bottom: 5.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-title">
+        <h1>15400 托育人員單一級學科模擬測驗</h1>
+        <p>工會學員專屬線上練題系統（支援手機 / 平板 / 電腦）</p>
+    </div>
+    <div class="timer-box" id="timerBox">
+        <span>⏱ 剩餘：</span>
+        <span id="timerDisplay">100:00</span>
+    </div>
+</header>
+
+<div class="container">
+    <!-- 1. 首頁入口區塊（雙管道設計） -->
+    <div class="portal-card" id="startScreen">
+        <span class="portal-badge">115年最新公告題庫適用</span>
+        <h2>托育人員技術士學科線上練習專區</h2>
+        <p class="portal-desc">
+            歡迎學員多加利用本會學科練習資源！您可選擇直接在<strong>工會專屬模擬系統</strong>進行手機或電腦版全真隨機測驗，亦可前往<strong>勞動部官方即測即評模擬網</strong>熟悉正式考場介面。
+        </p>
+
+        <div class="channels-grid">
+            <!-- 管道一：工會專屬練習網頁 -->
+            <div class="channel-box featured">
+                <span class="ribbon">手機 / 電腦皆可順暢操作</span>
+                <div>
+                    <h3>📱 管道一：工會專屬全真模擬測驗</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">
+                        專為本會學員設計，題目與選項<strong>每次全隨機洗牌</strong>，具備標記存疑、跳題卡與即時錯題解析功能。
+                    </p>
+                    <ul class="channel-features">
+                        <li>比照正式考試：隨機抽題、每題1.25分、60分及格</li>
+                        <li>每次重考「題號順序」與「選項排列」皆重新打亂</li>
+                        <li>交卷立即自動閱卷，一鍵篩選「只看錯題」複習</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <div class="mode-selector">
+                        <label for="examMode">請選擇測驗模式（目前內建範本題庫）：</label>
+                        <select id="examMode">
+                            <option value="all_sample">全真模擬模式（範本全隨機 20 題 / 限時 25 分）</option>
+                            <option value="quick_10">隨堂快刷模式（全隨機 10 題 / 不限時練習）</option>
+                            <option value="cat_1">分科練習：01 托育職業倫理</option>
+                            <option value="cat_2">分科練習：02 嬰幼兒發展</option>
+                            <option value="cat_3">分科練習：03 嬰幼兒保育</option>
+                            <option value="cat_4">分科練習：04 嬰幼兒衛生保健</option>
+                            <option value="cat_5">分科練習：05 嬰幼兒生活及環境</option>
+                            <option value="cat_6">分科練習：06 親職教育</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="startExam()">立即開始隨機測驗 ▶</button>
+                </div>
+            </div>
+
+            <!-- 管道二：勞動部即測即評官方模擬網 -->
+            <div class="channel-box official">
+                <div>
+                    <h3>🖥️ 管道二：勞動部即測即評測試網</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">
+                        連結至勞動部勞動力發展署技能檢定中心「即測即評及發證」線上模擬測試系統。
+                    </p>
+                    <ul class="channel-features">
+                        <li>官方原汁原味考場操作畫面體驗</li>
+                        <li>點選後進入系統，職類請選擇「15400 托育人員」</li>
+                        <li>建議使用桌上型電腦或筆記型電腦開啟瀏覽</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <a href="https://etest.wdasec.gov.tw/eTest/Forms/Index" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+                        前往勞動部即測即評測試網 ↗
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <p style="font-size: 0.82rem; color: var(--text-muted);">
+            ※ 註：本頁目前載入 30 題精選範本題庫供工會測試介面與隨機抽題機制；確認操作手感無誤後，可隨時將完整題庫匯入題庫陣列中（正式設定為隨機抽選 80 題、限時 100 分鐘）。
+        </p>
+    </div>
+
+    <!-- 2. 測驗作答區 -->
+    <div class="exam-layout" id="examScreen">
+        <div class="question-card" id="questionCardTop">
+            <div class="q-meta">
+                <span class="q-category" id="qCategory">工作項目</span>
+                <span class="q-progress" id="qProgress">第 1 題 / 共 20 題</span>
+            </div>
+
+            <div class="q-body-stable">
+                <div class="q-text" id="qText">題目載入中...</div>
+
+                <div class="options-list" id="optionsList">
+                    <!-- 動態產生選項 -->
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <button class="btn btn-outline" id="prevBtn" onclick="prevQuestion()">⬅ 上一題</button>
+                <button class="btn btn-warning" id="flagBtn" onclick="toggleFlag()">🚩 存疑</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">下一題 ➡</button>
+            </div>
+        </div>
+
+        <!-- 右側/下方答題卡 -->
+        <div class="sidebar-card">
+            <div class="sidebar-title">
+                <span>作答進度與題號卡</span>
+                <span id="answeredCount" style="color: var(--primary); font-size: 0.88rem;">0 / 20</span>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item"><span class="dot" style="background: var(--primary);"></span>已作答</div>
+                <div class="legend-item"><span class="dot" style="background: white; border: 1px solid var(--border);"></span>未作答</div>
+                <div class="legend-item"><span class="dot" style="background: var(--warning);"></span>標記存疑</div>
+            </div>
+
+            <div class="grid-numbers" id="numberGrid">
+                <!-- 動態產生題號格 -->
+            </div>
+
+            <button class="btn btn-danger" onclick="confirmSubmit()">確認交卷並計分</button>
+        </div>
+    </div>
+
+    <!-- 3. 測驗結果與解析區 -->
+    <div class="result-screen" id="resultScreen">
+        <div class="score-banner">
+            <div class="score-circle" id="scoreCircle">
+                <span class="score-num" id="finalScore">85</span>
+                <span class="score-label" id="passStatus">及格！</span>
+            </div>
+            <h2 id="resultTitle">測驗完成！</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem;" id="resultSubtitle">及格標準為 60 分，請繼續保持！</p>
+
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-val" style="color: var(--success);" id="statCorrect">0</div>
+                    <div class="stat-lbl">答對題數</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-val" style="color: var(--danger);" id="statWrong">0</div>
+                    <div class="stat-lbl">答錯 / 未答</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-val" style="color: var(--primary);" id="statTime">00:00</div>
+                    <div class="stat-lbl">作答耗時</div>
+                </div>
+            </div>
+
+            <div class="review-controls">
+                <button class="btn btn-outline" onclick="filterReview('all')">顯示全部題目</button>
+                <button class="btn btn-danger" onclick="filterReview('wrong')">只看答錯題目</button>
+                <button class="btn btn-primary" onclick="restartSameMode()">重新洗牌再測一次 🔄</button>
+                <button class="btn btn-outline" onclick="backToHome()">返回首頁</button>
+            </div>
+        </div>
+
+        <div id="reviewContainer">
+            <!-- 動態產生逐題詳解 -->
+        </div>
+    </div>
+</div>
+
+<div class="notice-footer" id="noticeFooter">
+    托育人員職業工會 數位學習資源平台 ｜ 依據勞動部勞動力發展署最新公告學科題庫建置
+</div>
+
+<script>
+    const questionBank = [
+        // 01 托育職業倫理
+        {
+            cat: '1', catName: '01 托育職業倫理',
+            q: '托育人員應提供家長下列哪些服務資料內容？A.收托時間；B.收托環境；C.收托費用；D.家庭經濟狀況。',
+            options: ['ABC', 'BCD', 'ABD', 'ABCD']
+        },
+        {
+            cat: '1', catName: '01 托育職業倫理',
+            q: '下列何者不符合托育人員所應提供之托育服務？',
+            options: [
+                '收托兒童後再投保責任保險',
+                '提供清潔、衛生、安全及適齡適性之托育環境',
+                '所照顧的兒童不能超過四位（含托育人員自己未滿3歲的小孩）',
+                '專心提供托育服務，不能有其他的兼職'
+            ]
+        },
+        {
+            cat: '1', catName: '01 托育職業倫理',
+            q: '下列何者不屬於托育人員應扮演的角色？',
+            options: [
+                '讓孩子稱呼自己為媽媽或爸爸，扮演父母的角色',
+                '像老師一樣的教導孩子',
+                '像朋友一樣的陪孩子玩',
+                '像醫護人員一樣的照護孩子'
+            ]
+        },
+        {
+            cat: '1', catName: '01 托育職業倫理',
+            q: '依「兒童及少年福利與權益保障法」規定，托育人員知悉兒童有受虐待之情事者，應在幾小時內向主管機關報告？',
+            options: ['24小時', '12小時', '36小時', '48小時']
+        },
+        {
+            cat: '1', catName: '01 托育職業倫理',
+            q: '托育人員應盡的義務，下列哪些正確？A.提供清潔、衛生、安全及適宜兒童發展之托育服務環境；B.每年一次定期身體健康檢查；C.接受居家托育服務中心的訪視與輔導；D.參加地方政府辦理之在職研習，每年至少18小時。',
+            options: ['ACD', 'ABC', 'ABD', 'BCD']
+        },
+
+        // 02 嬰幼兒發展
+        {
+            cat: '2', catName: '02 嬰幼兒發展',
+            q: '在兒童繪畫發展的階段中，下列哪一階段的幼兒圖畫漸能和實物相似？',
+            options: ['圖式期', '塗鴉期', '象徵期', '寫實期']
+        },
+        {
+            cat: '2', catName: '02 嬰幼兒發展',
+            q: '下列何者是大小便訓練的最佳年齡？',
+            options: ['一歲半至二歲半', '一歲以下', '二歲至三歲', '二歲半至三歲半']
+        },
+        {
+            cat: '2', catName: '02 嬰幼兒發展',
+            q: '下列哪種遊戲類型是兩位幼兒在同一空間一起玩，彼此有互動且有共同話題，但沒有共同的遊戲目標？',
+            options: ['聯合遊戲', '單獨遊戲', '平行遊戲', '合作遊戲']
+        },
+        {
+            cat: '2', catName: '02 嬰幼兒發展',
+            q: '對於八個月大的孩子，最有助於物體恆存概念發展的遊戲為？',
+            options: ['躲貓貓', '拍手遊戲', '發音遊戲', '有聲響的遊戲']
+        },
+        {
+            cat: '2', catName: '02 嬰幼兒發展',
+            q: '早期療育三部曲依序為？',
+            options: [
+                '篩檢發現→診斷評估→介入治療',
+                '診斷評估→篩檢發現→介入治療',
+                '診斷評估→介入治療→篩檢發現',
+                '介入治療→篩檢發現→診斷評估'
+            ]
+        },
+
+        // 03 嬰幼兒保育
+        {
+            cat: '3', catName: '03 嬰幼兒保育',
+            q: '消毒奶瓶的方法，下列何者錯誤？',
+            options: ['開水燙', '紫外線消毒', '煮沸法消毒', '蒸氣鍋消毒']
+        },
+        {
+            cat: '3', catName: '03 嬰幼兒保育',
+            q: '台灣地區一歲以下嬰兒意外死亡的原因，下列何者為最高？',
+            options: ['窒息', '機車交通事故', '中毒', '墜落']
+        },
+        {
+            cat: '3', catName: '03 嬰幼兒保育',
+            q: '下列何者是給嬰兒沐浴時，準備洗澡水的正確原則？',
+            options: [
+                '先放冷水再加熱水',
+                '先放熱水再加冷水',
+                '水量要超過浴盆2/3以上',
+                '水溫要調整至37-43°C之間'
+            ]
+        },
+        {
+            cat: '3', catName: '03 嬰幼兒保育',
+            q: '蜂蜜中可能含有何種菌種，所以不適合嬰兒食用？',
+            options: ['肉毒桿菌', '乳酸桿菌', '大腸桿菌', '腸炎弧菌']
+        },
+        {
+            cat: '3', catName: '03 嬰幼兒保育',
+            q: '母乳是嬰兒最好的營養來源，國民健康署建議純母乳哺育幾個月，最符合嬰兒生長所需？',
+            options: ['6個月', '1個月', '3個月', '12個月']
+        },
+
+        // 04 嬰幼兒衛生保健
+        {
+            cat: '4', catName: '04 嬰幼兒衛生保健',
+            q: '下列何者為燒燙傷處理的正確步驟？',
+            options: ['沖、脫、泡、蓋、送', '沖、泡、脫、蓋、送', '脫、泡、沖、蓋、送', '泡、沖、脫、蓋、送']
+        },
+        {
+            cat: '4', catName: '04 嬰幼兒衛生保健',
+            q: '以耳溫槍為二歲幼兒測量耳溫時，下列何者為正確拉耳朵的方法？',
+            options: ['往下往後拉', '往上往後拉', '往上往前拉', '往下往前拉']
+        },
+        {
+            cat: '4', catName: '04 嬰幼兒衛生保健',
+            q: '以一般民眾自行購買之市售含氯5%家用漂白水，配置成1公升 1000ppm（0.1%）溶液，需要多少量之漂白水？',
+            options: ['20cc', '10cc', '30cc', '40cc']
+        },
+        {
+            cat: '4', catName: '04 嬰幼兒衛生保健',
+            q: '下列何者是操作心肺復甦術每個循環之胸部按壓和人工呼吸的比值？',
+            options: ['30:2', '5:1', '10:2', '15:1']
+        },
+        {
+            cat: '4', catName: '04 嬰幼兒衛生保健',
+            q: '衛生福利部提供6歲以下學齡前兒童，多長時間可到牙科做一次免費的牙齒塗氟服務，避免蛀牙？',
+            options: ['6個月', '2個月', '3個月', '12個月']
+        },
+
+        // 05 嬰幼兒生活及環境
+        {
+            cat: '5', catName: '05 嬰幼兒生活及環境',
+            q: '有關幼兒活動室門的設計，下列何者較為適宜？',
+            options: [
+                '門應向外開，每間活動室兩個門',
+                '門應向內開，每間活動室兩個門',
+                '門應向內開，每間活動室一個門',
+                '門應向外開，每間活動室一個門'
+            ]
+        },
+        {
+            cat: '5', catName: '05 嬰幼兒生活及環境',
+            q: '下列何者屬於開放性的教具？',
+            options: ['積木', '拼圖', '迷宮圖', '著色遊戲']
+        },
+        {
+            cat: '5', catName: '05 嬰幼兒生活及環境',
+            q: '下列何者是幼兒學習的原則？',
+            options: ['實物→圖片→符號', '圖片→實物→符號', '符號→圖片→實物', '圖片→符號→實物']
+        },
+        {
+            cat: '5', catName: '05 嬰幼兒生活及環境',
+            q: '在規劃嬰幼兒托育環境時，下列何者為首要考量？',
+            options: ['安全性', '柔軟性', '趣味性', '挑戰性']
+        },
+        {
+            cat: '5', catName: '05 嬰幼兒生活及環境',
+            q: '為避免1歲以下嬰兒睡眠時發生猝死，照顧者最好讓嬰兒採取下列何種睡眠姿勢？',
+            options: ['仰睡', '側睡', '趴睡', '抱著睡']
+        },
+
+        // 06 親職教育
+        {
+            cat: '6', catName: '06 親職教育',
+            q: '下列何種類型的父母較能教養出肯合作、自律、友善、有活力和肯上進的子女？',
+            options: ['民主型', '專制型', '放任型', '疏忽型']
+        },
+        {
+            cat: '6', catName: '06 親職教育',
+            q: '寶寶日誌內容的書寫，下列何者屬於具體客觀的敘述？',
+            options: ['小華今天放手自己走5步', '小民今天很乖', '小津今天食慾不佳', '小藝很愛撒嬌']
+        },
+        {
+            cat: '6', catName: '06 親職教育',
+            q: '托育人員告訴小明，只要專心吃完飯，就可得到1點；集滿5點就可以兌換禮物，托育人員是使用何種增強物？',
+            options: ['次級增強物', '初級增強物', '社會性增強物', '自然增強物']
+        },
+        {
+            cat: '6', catName: '06 親職教育',
+            q: '托育人員離開時，幼兒表現焦慮且四處找尋，但托育人員回來時卻顯得很生氣，是屬於依附關係中的哪一型？',
+            options: ['矛盾型', '迴避型', '安全型', '穩定型']
+        },
+        {
+            cat: '6', catName: '06 親職教育',
+            q: '由人文學派 Thomas Gordon 所創的父母效能訓練（PET）處遇策略中，下列何者正確？',
+            options: [
+                '父母應多使用「我的訊息」和孩子進行表達和溝通',
+                '父母應強調一致性的管教原則，才不會造成親子衝突',
+                '父母只需重視孩子的行為結果給予獎賞，不需重視其想法和動機',
+                '父母需要多用威權才能從小把孩子管教好'
+            ]
+        }
+    ];
+
+    let currentExam = [];
+    let currentIndex = 0;
+    let userAnswers = [];
+    let flaggedQuestions = [];
+    let timerInterval = null;
+    let timeRemaining = 0;
+    let totalTimeAllowed = 0;
+    let lastSelectedMode = 'all_sample';
+
+    const badgeSymbols = ['①', '②', '③', '④'];
+
+    function shuffleArray(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    function startExam() {
+        const mode = document.getElementById('examMode').value;
+        lastSelectedMode = mode;
+
+        let pool = [];
+        let targetCount = 20;
+        let minutes = 25;
+
+        if (mode === 'all_sample') {
+            pool = [...questionBank];
+            targetCount = Math.min(20, pool.length);
+            minutes = 25;
+        } else if (mode === 'quick_10') {
+            pool = [...questionBank];
+            targetCount = Math.min(10, pool.length);
+            minutes = 0;
+        } else if (mode.startsWith('cat_')) {
+            const catId = mode.split('_')[1];
+            pool = questionBank.filter(item => item.cat === catId);
+            targetCount = pool.length;
+            minutes = 0;
+        }
+
+        const selectedRaw = shuffleArray(pool).slice(0, targetCount);
+
+        currentExam = selectedRaw.map(item => {
+            const correctText = item.options[0];
+            const shuffledOpts = shuffleArray(item.options);
+            const newCorrectIdx = shuffledOpts.indexOf(correctText);
+            return {
+                catName: item.catName,
+                q: item.q,
+                options: shuffledOpts,
+                answerIdx: newCorrectIdx
+            };
+        });
+
+        currentIndex = 0;
+        userAnswers = new Array(currentExam.length).fill(null);
+        flaggedQuestions = new Array(currentExam.length).fill(false);
+
+        document.getElementById('startScreen').style.display = 'none';
+        document.getElementById('resultScreen').style.display = 'none';
+        document.getElementById('examScreen').style.display = 'grid';
+        document.getElementById('noticeFooter').classList.add('in-exam');
+
+        clearInterval(timerInterval);
+        const timerBox = document.getElementById('timerBox');
+        timerBox.classList.remove('warning');
+
+        if (minutes > 0) {
+            totalTimeAllowed = minutes * 60;
+            timeRemaining = totalTimeAllowed;
+            timerBox.style.display = 'flex';
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                if (timeRemaining <= 300) {
+                    timerBox.classList.add('warning');
+                }
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    alert('測驗時間已到，系統將自動為您交卷！');
+                    submitExam();
+                }
+            }, 1000);
+        } else {
+            totalTimeAllowed = 0;
+            timeRemaining = 0;
+            timerBox.style.display = 'flex';
+            document.getElementById('timerDisplay').textContent = '不限時';
+        }
+
+        renderNumberGrid();
+        renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    function updateTimerDisplay() {
+        const mins = Math.floor(timeRemaining / 60);
+        const secs = timeRemaining % 60;
+        document.getElementById('timerDisplay').textContent =
+            `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    // 換題時若手機畫面已往下滑動，平滑對齊題目卡片頂端
+    function alignQuestionViewIfMobile() {
+        if (window.innerWidth <= 850) {
+            const card = document.getElementById('questionCardTop');
+            const headerOffset = 72;
+            const rect = card.getBoundingClientRect();
+            if (rect.top < headerOffset || rect.top > 150) {
+                const targetY = window.scrollY + rect.top - headerOffset;
+                window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+            }
+        }
+    }
+
+    function renderQuestion() {
+        const item = currentExam[currentIndex];
+        document.getElementById('qCategory').textContent = item.catName;
+        document.getElementById('qProgress').textContent = `第 ${currentIndex + 1} 題 / 共 ${currentExam.length} 題`;
+        document.getElementById('qText').textContent = `${currentIndex + 1}. ${item.q}`;
+
+        const optionsList = document.getElementById('optionsList');
+        optionsList.innerHTML = '';
+
+        item.options.forEach((optText, idx) => {
+            const div = document.createElement('div');
+            div.className = 'option-item' + (userAnswers[currentIndex] === idx ? ' selected' : '');
+            div.onclick = () => selectOption(idx);
+            div.innerHTML = `
+                <div class="option-badge">${badgeSymbols[idx]}</div>
+                <div class="option-text">${optText}</div>
+            `;
+            optionsList.appendChild(div);
+        });
+
+        document.getElementById('prevBtn').disabled = (currentIndex === 0);
+        const nextBtn = document.getElementById('nextBtn');
+        if (currentIndex === currentExam.length - 1) {
+            nextBtn.textContent = '交卷 ✓';
+            nextBtn.className = 'btn btn-danger';
+            nextBtn.onclick = confirmSubmit;
+        } else {
+            nextBtn.textContent = '下一題 ➡';
+            nextBtn.className = 'btn btn-primary';
+            nextBtn.onclick = nextQuestion;
+        }
+
+        const flagBtn = document.getElementById('flagBtn');
+        if (flaggedQuestions[currentIndex]) {
+            flagBtn.classList.add('active');
+            flagBtn.textContent = '🚩 已存疑';
+        } else {
+            flagBtn.classList.remove('active');
+            flagBtn.textContent = '🚩 存疑';
+        }
+
+        updateNumberGrid();
+    }
+
+    function selectOption(optIdx) {
+        userAnswers[currentIndex] = optIdx;
+        renderQuestion();
+    }
+
+    function toggleFlag() {
+        flaggedQuestions[currentIndex] = !flaggedQuestions[currentIndex];
+        renderQuestion();
+    }
+
+    function prevQuestion() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderQuestion();
+            alignQuestionViewIfMobile();
+        }
+    }
+
+    function nextQuestion() {
+        if (currentIndex < currentExam.length - 1) {
+            currentIndex++;
+            renderQuestion();
+            alignQuestionViewIfMobile();
+        }
+    }
+
+    function jumpToQuestion(idx) {
+        currentIndex = idx;
+        renderQuestion();
+        alignQuestionViewIfMobile();
+    }
+
+    function renderNumberGrid() {
+        const grid = document.getElementById('numberGrid');
+        grid.innerHTML = '';
+        currentExam.forEach((_, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'num-btn';
+            btn.textContent = idx + 1;
+            btn.onclick = () => jumpToQuestion(idx);
+            grid.appendChild(btn);
+        });
+        updateNumberGrid();
+    }
+
+    function updateNumberGrid() {
+        const buttons = document.getElementById('numberGrid').children;
+        let answered = 0;
+
+        for (let i = 0; i < currentExam.length; i++) {
+            const btn = buttons[i];
+            btn.className = 'num-btn';
+            if (userAnswers[i] !== null) {
+                btn.classList.add('answered');
+                answered++;
+            }
+            if (i === currentIndex) {
+                btn.classList.add('current');
+            }
+            if (flaggedQuestions[i]) {
+                btn.classList.add('flagged');
+            }
+        }
+
+        document.getElementById('answeredCount').textContent = `${answered} / ${currentExam.length}`;
+    }
+
+    function confirmSubmit() {
+        const unanswered = userAnswers.filter(a => a === null).length;
+        let msg = '確定要交卷並計算成績嗎？';
+        if (unanswered > 0) {
+            msg = `您還有 ${unanswered} 題尚未作答，確定要直接交卷嗎？`;
+        }
+        if (confirm(msg)) {
+            submitExam();
+        }
+    }
+
+    function submitExam() {
+        clearInterval(timerInterval);
+        document.getElementById('timerBox').style.display = 'none';
+        document.getElementById('examScreen').style.display = 'none';
+        document.getElementById('resultScreen').style.display = 'block';
+        document.getElementById('noticeFooter').classList.remove('in-exam');
+
+        let correctCount = 0;
+        currentExam.forEach((item, idx) => {
+            if (userAnswers[idx] === item.answerIdx) {
+                correctCount++;
+            }
+        });
+
+        const total = currentExam.length;
+        const score = Math.round((correctCount / total) * 100 * 10) / 10;
+        const isPass = score >= 60;
+
+        const scoreCircle = document.getElementById('scoreCircle');
+        scoreCircle.className = 'score-circle' + (isPass ? '' : ' fail');
+        document.getElementById('finalScore').textContent = score;
+        document.getElementById('passStatus').textContent = isPass ? '及格！' : '未及格';
+        document.getElementById('resultTitle').textContent = isPass ? '🎉 恭喜您通過本次模擬測驗！' : '💪 再接再厲！差一點就及格了';
+        document.getElementById('resultSubtitle').textContent = `總題數 ${total} 題，每題 ${(100/total).toFixed(2)} 分（及格標準 60 分）`;
+
+        document.getElementById('statCorrect').textContent = `${correctCount} 題`;
+        document.getElementById('statWrong').textContent = `${total - correctCount} 題`;
+
+        if (totalTimeAllowed > 0) {
+            const used = totalTimeAllowed - timeRemaining;
+            const m = Math.floor(used / 60);
+            const s = used % 60;
+            document.getElementById('statTime').textContent = `${m}分${s}秒`;
+        } else {
+            document.getElementById('statTime').textContent = '自由練習';
+        }
+
+        filterReview('all');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function filterReview(type) {
+        const container = document.getElementById('reviewContainer');
+        container.innerHTML = '';
+
+        currentExam.forEach((item, idx) => {
+            const userChoice = userAnswers[idx];
+            const isCorrect = (userChoice === item.answerIdx);
+
+            if (type === 'wrong' && isCorrect) return;
+
+            const card = document.createElement('div');
+            card.className = 'review-card' + (isCorrect ? '' : ' wrong');
+
+            let optsHtml = '';
+            item.options.forEach((optText, oIdx) => {
+                let cls = 'rev-opt';
+                let mark = '';
+                if (oIdx === item.answerIdx) {
+                    cls += ' is-ans';
+                    mark = ' ✔（正確答案）';
+                } else if (oIdx === userChoice && !isCorrect) {
+                    cls += ' is-user-wrong';
+                    mark = ' ✘（您的選擇）';
+                }
+                optsHtml += `<div class="${cls}">${badgeSymbols[oIdx]} ${optText}${mark}</div>`;
+            });
+
+            const statusHtml = isCorrect
+                ? `<span class="tag-correct">✔ 答對</span>`
+                : `<span class="tag-wrong">✘ ${userChoice === null ? '未作答' : '答錯'}</span>`;
+
+            card.innerHTML = `
+                <div class="review-header">
+                    <span>第 ${idx + 1} 題 ｜ ${item.catName}</span>
+                    ${statusHtml}
+                </div>
+                <div style="font-weight: 600; margin-bottom: 0.5rem;">${item.q}</div>
+                <div class="review-opts">${optsHtml}</div>
+            `;
+            container.appendChild(card);
+        });
+
+        if (container.innerHTML === '') {
+            container.innerHTML = '<div class="portal-card"><p style="color: var(--success); font-weight: bold;">太棒了！您本次測驗全部答對，沒有錯題！</p></div>';
+        }
+    }
+
+    function restartSameMode() {
+        document.getElementById('examMode').value = lastSelectedMode;
+        startExam();
+    }
+
+    function backToHome() {
+        clearInterval(timerInterval);
+        document.getElementById('timerBox').style.display = 'none';
+        document.getElementById('examScreen').style.display = 'none';
+        document.getElementById('resultScreen').style.display = 'none';
+        document.getElementById('startScreen').style.display = 'block';
+        document.getElementById('noticeFooter').classList.remove('in-exam');
+    }
+</script>
+
+</body>
+</html>
