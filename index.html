@@ -30,6 +30,10 @@
             font-family: "Microsoft JhengHei", "PingFang TC", -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
+        html {
+            overflow-y: scroll; /* 防止卷軸出現/消失造成的水平微跳動 */
+        }
+
         body {
             background-color: var(--bg);
             color: var(--text);
@@ -40,7 +44,7 @@
         header {
             background: linear-gradient(135deg, var(--primary) 0%, #1e3a8a 100%);
             color: white;
-            padding: 1rem 1.5rem;
+            padding: 0.85rem 1.25rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             position: sticky;
             top: 0;
@@ -53,25 +57,25 @@
         }
 
         .header-title h1 {
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: 700;
             letter-spacing: 0.5px;
         }
 
         .header-title p {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             opacity: 0.85;
         }
 
         .timer-box {
             background: rgba(255, 255, 255, 0.15);
-            padding: 0.4rem 1rem;
+            padding: 0.35rem 0.85rem;
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             display: none;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
             border: 1px solid rgba(255,255,255,0.3);
         }
 
@@ -88,7 +92,7 @@
         /* Container */
         .container {
             max-width: 1100px;
-            margin: 1.5rem auto;
+            margin: 1.25rem auto;
             padding: 0 1rem;
         }
 
@@ -96,7 +100,7 @@
         .portal-card {
             background: var(--card);
             border-radius: 12px;
-            padding: 2rem;
+            padding: 1.75rem 1.5rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             text-align: center;
         }
@@ -113,7 +117,7 @@
         }
 
         .portal-card h2 {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             margin-bottom: 0.5rem;
             color: var(--text);
         }
@@ -121,23 +125,23 @@
         .portal-desc {
             color: var(--text-muted);
             max-width: 650px;
-            margin: 0 auto 2rem;
+            margin: 0 auto 1.75rem;
             font-size: 0.95rem;
         }
 
         /* Two Channels Grid */
         .channels-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
             text-align: left;
         }
 
         .channel-box {
             border: 2px solid var(--border);
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 1.4rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -147,7 +151,7 @@
 
         .channel-box:hover {
             border-color: var(--primary-light);
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(30, 64, 175, 0.1);
         }
 
@@ -170,7 +174,7 @@
         }
 
         .channel-box h3 {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             margin-bottom: 0.6rem;
             color: var(--primary);
             display: flex;
@@ -184,7 +188,7 @@
 
         .channel-features {
             list-style: none;
-            margin: 1rem 0 1.5rem;
+            margin: 1rem 0 1.25rem;
             font-size: 0.9rem;
             color: var(--text-muted);
         }
@@ -232,20 +236,17 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.25rem;
+            gap: 0.4rem;
+            padding: 0.7rem 1rem;
             border: none;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: bold;
             cursor: pointer;
             text-decoration: none;
-            transition: background 0.2s, transform 0.1s;
+            transition: background 0.15s;
             width: 100%;
-        }
-
-        .btn:active {
-            transform: scale(0.98);
+            user-select: none;
         }
 
         .btn-primary {
@@ -276,6 +277,11 @@
             background: var(--bg);
         }
 
+        .btn-outline:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
         .btn-warning {
             background: var(--warning-bg);
             color: var(--warning);
@@ -299,22 +305,24 @@
         /* Exam Layout */
         .exam-layout {
             display: none;
-            grid-template-columns: 1fr 300px;
-            gap: 1.5rem;
+            grid-template-columns: 1fr 310px;
+            gap: 1.25rem;
             align-items: start;
         }
 
         @media (max-width: 850px) {
             .exam-layout {
                 grid-template-columns: 1fr;
+                padding-bottom: 68px; /* 預留手機底部固定操作列空間 */
             }
         }
 
         .question-card {
             background: var(--card);
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 1.4rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow-anchor: none; /* 防止瀏覽器自動錨點捲動造成換題跳動 */
         }
 
         .q-meta {
@@ -322,7 +330,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
+            padding-bottom: 0.7rem;
             border-bottom: 1px solid var(--border);
             flex-wrap: wrap;
             gap: 0.5rem;
@@ -343,29 +351,43 @@
             font-weight: bold;
         }
 
+        /* 題目與選項穩定高度容器（大幅減少換題時的高度落差與跳動） */
+        .q-body-stable {
+            min-height: 330px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        @media (max-width: 600px) {
+            .q-body-stable {
+                min-height: 300px;
+            }
+        }
+
         .q-text {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
             color: var(--text);
-            line-height: 1.7;
+            line-height: 1.65;
         }
 
         .options-list {
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
+            gap: 0.7rem;
         }
 
         .option-item {
             display: flex;
             align-items: flex-start;
-            gap: 0.85rem;
-            padding: 1rem;
+            gap: 0.8rem;
+            padding: 0.85rem 0.95rem;
             border: 2px solid var(--border);
             border-radius: 10px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: border-color 0.15s, background 0.15s;
             background: white;
         }
 
@@ -380,8 +402,8 @@
         }
 
         .option-badge {
-            min-width: 28px;
-            height: 28px;
+            min-width: 26px;
+            height: 26px;
             border-radius: 50%;
             background: var(--bg);
             color: var(--text);
@@ -389,8 +411,9 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             border: 1px solid var(--border);
+            margin-top: 1px;
         }
 
         .option-item.selected .option-badge {
@@ -400,38 +423,56 @@
         }
 
         .option-text {
-            font-size: 1.02rem;
-            padding-top: 2px;
+            font-size: 1rem;
+            line-height: 1.5;
         }
 
+        /* 電腦版題目下方操作列 */
         .nav-controls {
             display: flex;
             justify-content: space-between;
-            gap: 0.75rem;
-            margin-top: 1.8rem;
-            padding-top: 1.2rem;
+            gap: 0.65rem;
+            margin-top: 1.5rem;
+            padding-top: 1.1rem;
             border-top: 1px solid var(--border);
-            flex-wrap: wrap;
         }
 
         .nav-controls .btn {
             width: auto;
             flex: 1;
-            min-width: 100px;
+            padding: 0.65rem 0.5rem;
+            font-size: 0.92rem;
+        }
+
+        /* 手機版底部固定導覽列（徹底解決手指上下追按鈕、畫面跳動問題） */
+        @media (max-width: 850px) {
+            .nav-controls {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                margin-top: 0;
+                padding: 0.6rem 0.75rem;
+                background: rgba(255, 255, 255, 0.97);
+                backdrop-filter: blur(6px);
+                border-top: 1px solid var(--border);
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+                z-index: 95;
+            }
         }
 
         /* Answer Sheet Sidebar */
         .sidebar-card {
             background: var(--card);
             border-radius: 12px;
-            padding: 1.25rem;
+            padding: 1.2rem;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
         .sidebar-title {
             font-size: 1rem;
             font-weight: bold;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.7rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -442,7 +483,7 @@
             gap: 0.75rem;
             font-size: 0.78rem;
             color: var(--text-muted);
-            margin-bottom: 1rem;
+            margin-bottom: 0.85rem;
             flex-wrap: wrap;
         }
 
@@ -459,19 +500,20 @@
             display: inline-block;
         }
 
+        /* 修正題號預覽超框與外框裁切問題 */
         .grid-numbers {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 0.45rem;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 0.5rem;
             max-height: 360px;
             overflow-y: auto;
-            padding-right: 4px;
-            margin-bottom: 1.2rem;
+            padding: 6px; /* 預留外框與右上角橘點空間，絕不超框裁切 */
+            margin: 0 -4px 1.1rem -4px;
         }
 
         .num-btn {
             padding: 0.45rem 0;
-            border: 1px solid var(--border);
+            border: 1.5px solid var(--border);
             background: white;
             border-radius: 6px;
             font-size: 0.85rem;
@@ -479,6 +521,7 @@
             cursor: pointer;
             text-align: center;
             position: relative;
+            transition: background 0.15s, border-color 0.15s;
         }
 
         .num-btn.answered {
@@ -487,21 +530,29 @@
             border-color: var(--primary);
         }
 
+        /* 改用 box-shadow 取代 outline，避免捲動容器邊緣被切掉 */
         .num-btn.current {
-            outline: 2px solid #0f172a;
-            outline-offset: 1px;
+            border-color: #0f172a;
+            box-shadow: 0 0 0 2px #0f172a;
+            z-index: 2;
+        }
+
+        .num-btn.answered.current {
+            border-color: #ffffff;
+            box-shadow: 0 0 0 2.5px #0f172a;
         }
 
         .num-btn.flagged::after {
             content: "";
             position: absolute;
-            top: -3px;
-            right: -3px;
-            width: 9px;
-            height: 9px;
+            top: -4px;
+            right: -4px;
+            width: 10px;
+            height: 10px;
             background: var(--warning);
             border-radius: 50%;
-            border: 1px solid white;
+            border: 1.5px solid white;
+            z-index: 3;
         }
 
         /* Result Screen */
@@ -512,15 +563,15 @@
         .score-banner {
             background: var(--card);
             border-radius: 12px;
-            padding: 2rem;
+            padding: 2rem 1.25rem;
             text-align: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             margin-bottom: 1.5rem;
         }
 
         .score-circle {
-            width: 130px;
-            height: 130px;
+            width: 125px;
+            height: 125px;
             border-radius: 50%;
             margin: 0 auto 1rem;
             display: flex;
@@ -539,7 +590,7 @@
         }
 
         .score-num {
-            font-size: 2.2rem;
+            font-size: 2.1rem;
             font-weight: 800;
             line-height: 1;
         }
@@ -553,7 +604,7 @@
         .stats-row {
             display: flex;
             justify-content: center;
-            gap: 2rem;
+            gap: 1.75rem;
             margin: 1.2rem 0;
             flex-wrap: wrap;
         }
@@ -563,7 +614,7 @@
         }
 
         .stat-val {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             font-weight: bold;
         }
 
@@ -574,7 +625,7 @@
 
         .review-controls {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.65rem;
             justify-content: center;
             margin-top: 1.5rem;
             flex-wrap: wrap;
@@ -587,7 +638,7 @@
         .review-card {
             background: var(--card);
             border-radius: 10px;
-            padding: 1.25rem;
+            padding: 1.2rem;
             margin-bottom: 1rem;
             border-left: 5px solid var(--success);
             box-shadow: 0 2px 6px rgba(0,0,0,0.04);
@@ -617,7 +668,7 @@
         }
 
         .rev-opt {
-            padding: 0.4rem 0.7rem;
+            padding: 0.45rem 0.7rem;
             border-radius: 6px;
         }
 
@@ -635,9 +686,16 @@
 
         .notice-footer {
             text-align: center;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            margin: 2rem 0;
+            margin: 1.75rem 0 2.5rem;
+            padding: 0 1rem;
+        }
+
+        @media (max-width: 850px) {
+            .notice-footer.in-exam {
+                margin-bottom: 5.5rem;
+            }
         }
     </style>
 </head>
@@ -649,7 +707,7 @@
         <p>工會學員專屬線上練題系統（支援手機 / 平板 / 電腦）</p>
     </div>
     <div class="timer-box" id="timerBox">
-        <span>⏱ 剩餘時間：</span>
+        <span>⏱ 剩餘：</span>
         <span id="timerDisplay">100:00</span>
     </div>
 </header>
@@ -726,21 +784,23 @@
 
     <!-- 2. 測驗作答區 -->
     <div class="exam-layout" id="examScreen">
-        <div class="question-card">
+        <div class="question-card" id="questionCardTop">
             <div class="q-meta">
                 <span class="q-category" id="qCategory">工作項目</span>
                 <span class="q-progress" id="qProgress">第 1 題 / 共 20 題</span>
             </div>
 
-            <div class="q-text" id="qText">題目載入中...</div>
+            <div class="q-body-stable">
+                <div class="q-text" id="qText">題目載入中...</div>
 
-            <div class="options-list" id="optionsList">
-                <!-- 動態產生選項 -->
+                <div class="options-list" id="optionsList">
+                    <!-- 動態產生選項 -->
+                </div>
             </div>
 
             <div class="nav-controls">
                 <button class="btn btn-outline" id="prevBtn" onclick="prevQuestion()">⬅ 上一題</button>
-                <button class="btn btn-warning" id="flagBtn" onclick="toggleFlag()">🚩 標記存疑</button>
+                <button class="btn btn-warning" id="flagBtn" onclick="toggleFlag()">🚩 存疑</button>
                 <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">下一題 ➡</button>
             </div>
         </div>
@@ -805,25 +865,17 @@
     </div>
 </div>
 
-<div class="notice-footer">
+<div class="notice-footer" id="noticeFooter">
     托育人員職業工會 數位學習資源平台 ｜ 依據勞動部勞動力發展署最新公告學科題庫建置
 </div>
 
 <script>
-    // =========================================================================
-    // 題庫資料區（此處先放入 30 題精選範本，未來可直接將完整題庫貼入此陣列）
-    // 格式說明：
-    // cat: 工作項目代碼 ('1'~'6')
-    // catName: 工作項目名稱
-    // q: 題目文字
-    // options: 四個選項陣列（index 0 為正解，系統執行時會自動隨機打亂選項順序！）
-    // =========================================================================
     const questionBank = [
         // 01 托育職業倫理
         {
             cat: '1', catName: '01 托育職業倫理',
             q: '托育人員應提供家長下列哪些服務資料內容？A.收托時間；B.收托環境；C.收托費用；D.家庭經濟狀況。',
-            options: ['ABC', 'BCD', 'ABD', 'ABCD'] // 第一個為正確答案，系統會自動洗牌
+            options: ['ABC', 'BCD', 'ABD', 'ABCD']
         },
         {
             cat: '1', catName: '01 托育職業倫理',
@@ -1012,21 +1064,17 @@
         }
     ];
 
-    // =========================================================================
-    // 系統狀態變數
-    // =========================================================================
-    let currentExam = [];      // 本次抽出的題目陣列
-    let currentIndex = 0;      // 目前題號索引
-    let userAnswers = [];      // 使用者選擇的選項索引
-    let flaggedQuestions = []; // 標記存疑陣列
+    let currentExam = [];
+    let currentIndex = 0;
+    let userAnswers = [];
+    let flaggedQuestions = [];
     let timerInterval = null;
-    let timeRemaining = 0;     // 剩餘秒數
-    let totalTimeAllowed = 0;  // 總秒數
+    let timeRemaining = 0;
+    let totalTimeAllowed = 0;
     let lastSelectedMode = 'all_sample';
 
     const badgeSymbols = ['①', '②', '③', '④'];
 
-    // Fisher-Yates 洗牌演算法（確保每次真正全隨機）
     function shuffleArray(arr) {
         const copy = [...arr];
         for (let i = copy.length - 1; i > 0; i--) {
@@ -1036,7 +1084,6 @@
         return copy;
     }
 
-    // 開始測驗
     function startExam() {
         const mode = document.getElementById('examMode').value;
         lastSelectedMode = mode;
@@ -1047,12 +1094,12 @@
 
         if (mode === 'all_sample') {
             pool = [...questionBank];
-            targetCount = Math.min(20, pool.length); // 完整題庫匯入後可改為 80
-            minutes = 25; // 完整 80 題時可改為 100
+            targetCount = Math.min(20, pool.length);
+            minutes = 25;
         } else if (mode === 'quick_10') {
             pool = [...questionBank];
             targetCount = Math.min(10, pool.length);
-            minutes = 0; // 不限時
+            minutes = 0;
         } else if (mode.startsWith('cat_')) {
             const catId = mode.split('_')[1];
             pool = questionBank.filter(item => item.cat === catId);
@@ -1060,12 +1107,10 @@
             minutes = 0;
         }
 
-        // 1. 隨機打亂題目順序並抽出指定題數
         const selectedRaw = shuffleArray(pool).slice(0, targetCount);
 
-        // 2. 將每題的選項順序也進行隨機洗牌，並記錄正確答案的新位置
         currentExam = selectedRaw.map(item => {
-            const correctText = item.options[0]; // 原始資料第0個是正解
+            const correctText = item.options[0];
             const shuffledOpts = shuffleArray(item.options);
             const newCorrectIdx = shuffledOpts.indexOf(correctText);
             return {
@@ -1080,12 +1125,11 @@
         userAnswers = new Array(currentExam.length).fill(null);
         flaggedQuestions = new Array(currentExam.length).fill(false);
 
-        // 切換畫面
         document.getElementById('startScreen').style.display = 'none';
         document.getElementById('resultScreen').style.display = 'none';
         document.getElementById('examScreen').style.display = 'grid';
+        document.getElementById('noticeFooter').classList.add('in-exam');
 
-        // 設定計時器
         clearInterval(timerInterval);
         const timerBox = document.getElementById('timerBox');
         timerBox.classList.remove('warning');
@@ -1111,11 +1155,12 @@
             totalTimeAllowed = 0;
             timeRemaining = 0;
             timerBox.style.display = 'flex';
-            document.getElementById('timerDisplay').textContent = '不限時練習';
+            document.getElementById('timerDisplay').textContent = '不限時';
         }
 
         renderNumberGrid();
         renderQuestion();
+        window.scrollTo({ top: 0, behavior: 'auto' });
     }
 
     function updateTimerDisplay() {
@@ -1125,7 +1170,19 @@
             `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
-    // 渲染目前題目
+    // 換題時若手機畫面已往下滑動，平滑對齊題目卡片頂端
+    function alignQuestionViewIfMobile() {
+        if (window.innerWidth <= 850) {
+            const card = document.getElementById('questionCardTop');
+            const headerOffset = 72;
+            const rect = card.getBoundingClientRect();
+            if (rect.top < headerOffset || rect.top > 150) {
+                const targetY = window.scrollY + rect.top - headerOffset;
+                window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+            }
+        }
+    }
+
     function renderQuestion() {
         const item = currentExam[currentIndex];
         document.getElementById('qCategory').textContent = item.catName;
@@ -1146,11 +1203,10 @@
             optionsList.appendChild(div);
         });
 
-        // 更新按鈕狀態
         document.getElementById('prevBtn').disabled = (currentIndex === 0);
         const nextBtn = document.getElementById('nextBtn');
         if (currentIndex === currentExam.length - 1) {
-            nextBtn.textContent = '完成並交卷 ✓';
+            nextBtn.textContent = '交卷 ✓';
             nextBtn.className = 'btn btn-danger';
             nextBtn.onclick = confirmSubmit;
         } else {
@@ -1162,10 +1218,10 @@
         const flagBtn = document.getElementById('flagBtn');
         if (flaggedQuestions[currentIndex]) {
             flagBtn.classList.add('active');
-            flagBtn.textContent = '🚩 已標記存疑';
+            flagBtn.textContent = '🚩 已存疑';
         } else {
             flagBtn.classList.remove('active');
-            flagBtn.textContent = '🚩 標記存疑';
+            flagBtn.textContent = '🚩 存疑';
         }
 
         updateNumberGrid();
@@ -1185,6 +1241,7 @@
         if (currentIndex > 0) {
             currentIndex--;
             renderQuestion();
+            alignQuestionViewIfMobile();
         }
     }
 
@@ -1192,15 +1249,16 @@
         if (currentIndex < currentExam.length - 1) {
             currentIndex++;
             renderQuestion();
+            alignQuestionViewIfMobile();
         }
     }
 
     function jumpToQuestion(idx) {
         currentIndex = idx;
         renderQuestion();
+        alignQuestionViewIfMobile();
     }
 
-    // 渲染右側答題卡格子
     function renderNumberGrid() {
         const grid = document.getElementById('numberGrid');
         grid.innerHTML = '';
@@ -1236,7 +1294,6 @@
         document.getElementById('answeredCount').textContent = `${answered} / ${currentExam.length}`;
     }
 
-    // 確認交卷
     function confirmSubmit() {
         const unanswered = userAnswers.filter(a => a === null).length;
         let msg = '確定要交卷並計算成績嗎？';
@@ -1248,12 +1305,12 @@
         }
     }
 
-    // 交卷與計分
     function submitExam() {
         clearInterval(timerInterval);
         document.getElementById('timerBox').style.display = 'none';
         document.getElementById('examScreen').style.display = 'none';
         document.getElementById('resultScreen').style.display = 'block';
+        document.getElementById('noticeFooter').classList.remove('in-exam');
 
         let correctCount = 0;
         currentExam.forEach((item, idx) => {
@@ -1289,7 +1346,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // 篩選檢視解析
     function filterReview(type) {
         const container = document.getElementById('reviewContainer');
         container.innerHTML = '';
@@ -1348,6 +1404,7 @@
         document.getElementById('examScreen').style.display = 'none';
         document.getElementById('resultScreen').style.display = 'none';
         document.getElementById('startScreen').style.display = 'block';
+        document.getElementById('noticeFooter').classList.remove('in-exam');
     }
 </script>
 
