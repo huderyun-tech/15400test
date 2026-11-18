@@ -464,9 +464,12 @@
             grid-template-columns: repeat(5, 1fr);
             gap: 0.45rem;
             max-height: 360px;
+            overflow-x: hidden;
             overflow-y: auto;
-            padding-right: 4px;
-            margin-bottom: 1.2rem;
+            /* 四周留白，避免目前題號的外框、標記存疑的小圓點被捲動容器裁切；
+               再用負的 margin 抵銷，讓格子位置看起來不變 */
+            padding: 6px 10px 6px 6px;
+            margin: -6px -6px 0.9rem -6px;
         }
 
         .num-btn {
@@ -10908,6 +10911,15 @@
         }
 
         document.getElementById('answeredCount').textContent = `${answered} / ${currentExam.length}`;
+
+        // 題號很多時，讓目前題號保持在題號卡的可視範圍內（只捲動題號卡，不會帶動整個頁面）
+        const grid = document.getElementById('numberGrid');
+        const cur = buttons[currentIndex];
+        if (cur && grid.scrollHeight > grid.clientHeight) {
+            const top = cur.offsetTop - grid.offsetTop;
+            if (top < grid.scrollTop + 6) grid.scrollTop = Math.max(0, top - 6);
+            else if (top + cur.offsetHeight > grid.scrollTop + grid.clientHeight - 6) grid.scrollTop = top + cur.offsetHeight - grid.clientHeight + 6;
+        }
     }
 
     // 確認交卷
